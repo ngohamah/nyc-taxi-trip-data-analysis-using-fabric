@@ -1,0 +1,36 @@
+{
+  "overview": [
+    ["Scale", "**41.1M** valid trips and **$1.18B** charged in 2024. Yellow taxis carry **98.4%** of them."],
+    ["Seasonality", "**October** is busiest (**3.81M** trips). July-August run about **20% lower** per day than Sep-Nov."],
+    ["Manhattan", "**88%** of pickups are in Manhattan, mostly short hops averaging **$16.24**."],
+    ["Airports", "JFK is the top pickup zone (**1.91M** trips) and earns **13.3%** of all revenue at **$63.86** a fare."],
+    ["Prices", "Average fare rose **10%** ($18.61 in Jan to **$20.51** in Dec). Card tips hold at about **22%**."]
+  ],
+  "compare": [
+    ["Size", "Green: **657K** trips vs yellow's **40.4M**. Green's share fell from **1.9%** to **1.5%** over the year."],
+    ["Coverage", "Yellow is **89%** Manhattan. Green is **59%** Manhattan, **25%** Queens and **14%** Brooklyn."],
+    ["Trip shape", "Green trips are shorter (**2.8 vs 3.4** mi) but slower, so revenue per mile is about equal (**$8.70 vs $8.54**)."],
+    ["Payment", "Cash is twice as common in green (**26.6% vs 13.3%**), and card tips are lower (**19.5% vs 21.9%**)."]
+  ],
+  "zones": [
+    ["Concentration", "The top **10** of **263** zones produce **37%** of trips. **82.7%** of trips start and end in Manhattan."],
+    ["Revenue", "**JFK (13.3%)** and **LaGuardia (7.4%)** earn over a fifth of all revenue from under **8%** of trips."],
+    ["Cross-borough", "Queens to Manhattan is the largest cross-borough flow: **2.1M** trips (**5.2%**), mostly airport runs."],
+    ["Weekdays", "**Thursday** is busiest (**124K** trips a day). **Monday (96K)** and **Sunday (101K)** are quietest."],
+    ["Holidays", "**Christmas -55%**, **July 4 -51%**, **Thanksgiving -39%** vs a typical same weekday. Columbus Day is business as usual (**+2%**)."]
+  ],
+  "demand": [
+    ["Rush hour", "Demand peaks at **5-7 pm** on weekdays. The busiest hour of the week is **Thursday 6 pm (1.2% of trips)**."],
+    ["Morning", "No sharp morning peak: trips climb steadily from **7 am** to the **6 pm** high."],
+    ["Traffic", "Average speed bottoms out at **9.7 mph** around 5 pm and roughly doubles to **20.8 mph** at 5 am."],
+    ["Night", "**4-5 am** is the quietest hour, about **12x** fewer trips than 6 pm, and the fastest time to cross the city."],
+    ["Weekends", "Saturday and Sunday nights (**midnight-3 am**) take a far bigger share than weekday nights."]
+  ],
+  "quality": [
+    ["Throughput", "**41.83M** Bronze rows produced **41.08M** Silver rows (**98.2%** kept). Only **7** exact duplicates."],
+    ["Rules", "**97.8%** of the **752K** rejected rows are **negative amounts**: refunds and voids recorded as separate rows."],
+    ["By service", "Rejection rate is **1.82%** for yellow vs **0.49%** for green, almost entirely refund rows."],
+    ["Trend", "Rejections rose from **1.28%** in January to **2.17%** in December. Worth watching in 2025 loads."],
+    ["Reconciliation", "Gold trip totals **equal** Silver valid rows exactly, and the Gold notebook fails the run if they don't."]
+  ]
+}
