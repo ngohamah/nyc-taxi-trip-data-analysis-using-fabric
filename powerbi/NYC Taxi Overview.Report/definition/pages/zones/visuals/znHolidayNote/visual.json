@@ -1,0 +1,227 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "znHolidayNote",
+  "position": {
+    "x": 588,
+    "y": 626,
+    "z": 100,
+    "width": 354,
+    "height": 82
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "How to read 'vs typical':",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " each holiday is compared with an ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "average 2024 day of the same weekday",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ", excluding holidays. Christmas (a Wednesday): ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "53,799",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " trips vs ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "119,223",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " on a typical Wednesday = ",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "-55%",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": ". Whole-year baseline, so seasonal swings are included.",
+                    "textStyle": {
+                      "fontSize": "8pt",
+                      "color": "#263238"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#D5DADF'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

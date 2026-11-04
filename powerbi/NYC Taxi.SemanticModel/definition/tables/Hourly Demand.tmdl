@@ -1,0 +1,110 @@
+/// Demand pattern aggregate (month x taxi type x weekday x hour x pickup borough). Standalone by design: its grain has no date, so filter it with its own fields rather than the Date table.
+table 'Hourly Demand'
+
+	/// Trips from the hourly demand table; use with its own Year Month / Taxi Type / Day of Week / Hour fields.
+	measure 'Hourly Trips' = SUM('Hourly Demand'[Trip Count])
+		formatString: #,##0
+		displayFolder: Demand
+
+	/// Trips in this weekday/hour as a share of all trips in the current slicer selection; comparable across boroughs, months and taxi types regardless of volume.
+	measure 'Share of Selected Trips' = ```
+			VAR SelectedTrips =
+			    CALCULATE(
+			        [Hourly Trips],
+			        ALLSELECTED('Hourly Demand'[Day of Week], 'Hourly Demand'[Day of Week Number], 'Hourly Demand'[Hour])
+			    )
+			RETURN
+			    DIVIDE([Hourly Trips], SelectedTrips)
+			```
+		formatString: 0.0%
+		displayFolder: Demand
+
+	/// Label for the weekday and hour currently in context; used as the heatmap tooltip title.
+	measure 'Selected Weekday and Hour' = ```
+			VAR DayName = SELECTEDVALUE('Hourly Demand'[Day of Week])
+			VAR HourNumber = SELECTEDVALUE('Hourly Demand'[Hour])
+			RETURN
+			    IF(
+			        NOT ISBLANK(DayName) && NOT ISBLANK(HourNumber),
+			        DayName & ", " & FORMAT(HourNumber, "00") & ":00-" & FORMAT(HourNumber + 1, "00") & ":00",
+			        "Several weekdays / hours"
+			    )
+			```
+		formatString: General
+		displayFolder: Demand
+
+	/// Total amount charged, from the hourly demand table.
+	measure 'Hourly Revenue' = SUM('Hourly Demand'[Total Amount])
+		formatString: $#,##0
+		displayFolder: Demand
+
+	/// Average trip speed: total miles divided by total hours in motion.
+	measure 'Average Speed (mph)' = DIVIDE(SUM('Hourly Demand'[Total Distance Miles]), SUM('Hourly Demand'[Total Duration Min]) / 60)
+		formatString: #,##0.0
+		displayFolder: Demand
+
+	/// Pickup month as yyyy-MM.
+	column 'Year Month'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: year_month
+
+	column 'Taxi Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: taxi_type
+
+	column 'Day of Week Number'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: pickup_day_of_week
+
+	column 'Day of Week'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: pickup_day_name
+		sortByColumn: 'Day of Week Number'
+
+	/// Pickup hour of day, 0-23 (New York local time).
+	column Hour
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: pickup_hour
+
+	column 'Pickup Borough'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: pu_borough
+
+	column 'Trip Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: trip_count
+
+	column 'Total Amount'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: total_amount
+
+	column 'Total Distance Miles'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: total_distance_miles
+
+	column 'Total Duration Min'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: total_duration_min
+
+	partition 'Hourly Demand' = entity
+		mode: directLake
+		source
+			entityName: hourly_demand
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

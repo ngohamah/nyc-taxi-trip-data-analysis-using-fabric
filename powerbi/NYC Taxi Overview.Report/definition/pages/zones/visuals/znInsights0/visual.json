@@ -1,0 +1,262 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/1.0.0/schema.json",
+  "name": "znInsights0",
+  "position": {
+    "x": 952,
+    "y": 212,
+    "z": 100,
+    "width": 316,
+    "height": 93
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "The top ",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "10",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " of ",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "263",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " zones produce ",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "37%",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " of trips. ",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238"
+                    }
+                  },
+                  {
+                    "value": "82.7%",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238",
+                      "fontWeight": "bold"
+                    }
+                  },
+                  {
+                    "value": " of trips start and end in Manhattan.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#263238"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#D5DADF'"
+                    }
+                  }
+                }
+              }
+            },
+            "radius": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dropShadow": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "4D"
+                }
+              }
+            },
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'CONCENTRATION'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#263238'"
+                    }
+                  }
+                }
+              }
+            },
+            "background": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#F7B500'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,79 @@
+/// Row counts per medallion layer. Grain: source month x taxi type. Standalone from the trip tables by design.
+table 'Pipeline Layers'
+
+	/// Rows landed in Bronze from the TLC source files.
+	measure 'Bronze Rows' = SUM('Pipeline Layers'[Bronze Row Count])
+		formatString: #,##0
+		displayFolder: Data quality
+
+	/// Rows that passed all Silver quality rules.
+	measure 'Silver Rows' = SUM('Pipeline Layers'[Silver Row Count])
+		formatString: #,##0
+		displayFolder: Data quality
+
+	/// Rows removed as exact duplicates on vendor, pickup/dropoff time and location, and total amount.
+	measure 'Duplicate Rows' = SUM('Pipeline Layers'[Duplicate Row Count])
+		formatString: #,##0
+		displayFolder: Data quality
+
+	/// Rejected rows as a share of Bronze rows.
+	measure 'Rejection Rate' = DIVIDE([Rejected Rows], [Bronze Rows])
+		formatString: 0.00%
+		displayFolder: Data quality
+
+	/// Share of Bronze rows that reached Silver.
+	measure 'Rows Kept %' = DIVIDE([Silver Rows], [Bronze Rows])
+		formatString: 0.00%
+		displayFolder: Data quality
+
+	/// Checks that Gold trip totals equal Silver valid rows across the whole dataset.
+	measure 'Gold Reconciliation' = ```
+			VAR SilverTotal = CALCULATE([Silver Rows], REMOVEFILTERS())
+			VAR GoldTotal = CALCULATE([Trips], REMOVEFILTERS())
+			RETURN
+			    IF(SilverTotal = GoldTotal, "Reconciled", "Mismatch: " & FORMAT(GoldTotal - SilverTotal, "#,##0"))
+			```
+		formatString: General
+		displayFolder: Data quality
+
+	column 'Month Type Key'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: month_type_key
+
+	/// Source file month as yyyy-MM.
+	column 'Year Month'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: year_month
+
+	column 'Taxi Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: taxi_type
+
+	column 'Bronze Row Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: bronze_rows
+
+	column 'Silver Row Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: silver_rows
+
+	column 'Duplicate Row Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: duplicate_rows
+
+	partition 'Pipeline Layers' = entity
+		mode: directLake
+		source
+			entityName: dq_layer_counts
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

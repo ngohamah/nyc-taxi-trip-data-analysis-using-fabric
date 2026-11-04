@@ -1,0 +1,44 @@
+/// Rejected rows by quality rule. Grain: source month x taxi type x reject reason.
+table Rejections
+
+	/// Rows that failed a Silver quality rule and were written to the rejected table.
+	measure 'Rejected Rows' = SUM(Rejections[Rejected Row Count])
+		formatString: #,##0
+		displayFolder: Data quality
+
+	column 'Month Type Key'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: month_type_key
+
+	column 'Year Month'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: year_month
+
+	column 'Taxi Type'
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: taxi_type
+
+	/// First Silver rule the row failed, e.g. negative_amount (refunds/voids) or non_positive_duration.
+	column 'Reject Reason'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: reject_reason
+
+	column 'Rejected Row Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: rejected_rows
+
+	partition Rejections = entity
+		mode: directLake
+		source
+			entityName: dq_rejections
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

@@ -1,0 +1,43 @@
+relationship 'Taxi Trips to Date'
+	fromColumn: 'Taxi Trips'.'Pickup Date'
+	toColumn: Date.Date
+
+relationship 'Taxi Trips to Pickup Zone'
+	fromColumn: 'Taxi Trips'.'Pickup Location ID'
+	toColumn: 'Pickup Zone'.'Location ID'
+
+relationship 'Rejections to Pipeline Layers'
+	fromColumn: Rejections.'Month Type Key'
+	toColumn: 'Pipeline Layers'.'Month Type Key'
+
+relationship 'Date to Month'
+	fromColumn: Date.'Year Month'
+	toColumn: Month.'Year Month'
+
+relationship 'Hourly Demand to Month'
+	fromColumn: 'Hourly Demand'.'Year Month'
+	toColumn: Month.'Year Month'
+
+relationship 'Pipeline Layers to Month'
+	fromColumn: 'Pipeline Layers'.'Year Month'
+	toColumn: Month.'Year Month'
+
+relationship 'Pickup Zone to Borough'
+	fromColumn: 'Pickup Zone'.Borough
+	toColumn: Borough.Borough
+
+relationship 'Hourly Demand to Borough'
+	fromColumn: 'Hourly Demand'.'Pickup Borough'
+	toColumn: Borough.Borough
+
+relationship 'Taxi Trips to Taxi Type'
+	fromColumn: 'Taxi Trips'.'Taxi Type'
+	toColumn: 'Taxi Type'.'Taxi Type'
+
+relationship 'Hourly Demand to Taxi Type'
+	fromColumn: 'Hourly Demand'.'Taxi Type'
+	toColumn: 'Taxi Type'.'Taxi Type'
+
+relationship 'Pipeline Layers to Taxi Type'
+	fromColumn: 'Pipeline Layers'.'Taxi Type'
+	toColumn: 'Taxi Type'.'Taxi Type'

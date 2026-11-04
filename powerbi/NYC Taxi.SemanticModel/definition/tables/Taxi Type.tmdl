@@ -1,0 +1,15 @@
+/// Shared taxi-type slicer table; filters trips, hourly demand and pipeline layers.
+table 'Taxi Type'
+
+	/// yellow = medallion taxi; green = Boro taxi.
+	column 'Taxi Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: taxi_type
+
+	partition 'Taxi Type' = entity
+		mode: directLake
+		source
+			entityName: dim_taxi_type
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

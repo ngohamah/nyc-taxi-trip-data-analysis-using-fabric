@@ -1,0 +1,15 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: en-US
+
+ref table 'Taxi Trips'
+ref table Date
+ref table 'Pickup Zone'
+ref table 'Hourly Demand'
+ref table 'Pipeline Layers'
+ref table Rejections
+ref table Month
+ref table Borough
+ref table 'Taxi Type'

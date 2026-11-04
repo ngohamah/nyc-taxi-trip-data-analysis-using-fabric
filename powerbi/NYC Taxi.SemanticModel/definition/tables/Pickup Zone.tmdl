@@ -1,0 +1,33 @@
+/// TLC taxi zones, joined to trips on the pickup location.
+table 'Pickup Zone'
+
+	column 'Location ID'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: location_id
+
+	/// Pickup borough (EWR = Newark Airport).
+	column Borough
+		dataType: string
+		summarizeBy: none
+		sourceColumn: borough
+
+	/// TLC taxi zone of the pickup.
+	column Zone
+		dataType: string
+		summarizeBy: none
+		sourceColumn: zone
+
+	/// TLC service area: Yellow Zone (central Manhattan), Boro Zone, Airports or EWR.
+	column 'Service Zone'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: service_zone
+
+	partition 'Pickup Zone' = entity
+		mode: directLake
+		source
+			entityName: dim_zone
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

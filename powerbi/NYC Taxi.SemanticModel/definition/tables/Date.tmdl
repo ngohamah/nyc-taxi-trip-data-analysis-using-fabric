@@ -1,0 +1,102 @@
+/// Calendar table, one row per day.
+table Date
+	dataCategory: Time
+
+	/// Calendar date; covers full calendar years of the data.
+	column Date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: quarter
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: month
+
+	column Month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: 'Month Number'
+
+	/// Three-letter month name for chart axes.
+	column 'Month Short'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: month_short
+		sortByColumn: 'Month Number'
+
+	/// Year and month as yyyy-MM.
+	column 'Year Month'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: year_month
+
+	column Day
+		dataType: int64
+		summarizeBy: none
+		sourceColumn: day
+
+	column 'Day of Week Number'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: day_of_week
+
+	/// Weekday name, sorted Monday to Sunday.
+	column 'Day of Week'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: day_name
+		sortByColumn: 'Day of Week Number'
+
+	column 'Is Weekend'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+	/// True on US federal holidays (actual date, not the observed day off).
+	column 'Is Holiday'
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_holiday
+
+	column Holiday
+		dataType: string
+		summarizeBy: none
+		sourceColumn: holiday_name
+
+	hierarchy Calendar
+
+		level Year
+			column: Year
+
+		level Quarter
+			column: Quarter
+
+		level Month
+			column: Month
+
+		level Date
+			column: Date
+
+	partition Date = entity
+		mode: directLake
+		source
+			entityName: dim_date
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

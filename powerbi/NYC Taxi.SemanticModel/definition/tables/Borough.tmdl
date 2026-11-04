@@ -1,0 +1,15 @@
+/// Shared pickup-borough slicer table; filters trips (via Pickup Zone) and hourly demand.
+table Borough
+
+	/// NYC borough of the pickup (EWR = Newark Airport).
+	column Borough
+		dataType: string
+		summarizeBy: none
+		sourceColumn: borough
+
+	partition Borough = entity
+		mode: directLake
+		source
+			entityName: dim_borough
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

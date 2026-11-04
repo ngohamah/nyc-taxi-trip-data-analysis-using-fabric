@@ -1,0 +1,6 @@
+/// OneLake connection to the nyc_taxi_lakehouse (Direct Lake on OneLake)
+expression 'DirectLake - NYC Taxi' =
+		let
+			Source = AzureStorage.DataLake("https://onelake.dfs.fabric.microsoft.com/a080bc0d-d09d-445c-8215-665932ff1166/de8f0b46-bf6f-40b0-92c0-10c80256c1b9", [HierarchicalNavigation=true])
+		in
+			Source

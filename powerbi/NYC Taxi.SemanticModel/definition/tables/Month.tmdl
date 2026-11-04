@@ -1,0 +1,39 @@
+/// Shared month slicer table; filters trips (via Date), hourly demand and pipeline layers.
+table Month
+
+	/// yyyy-MM
+	column 'Year Month'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: year_month
+
+	column Year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column 'Month Number'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: month
+
+	column Month
+		dataType: string
+		summarizeBy: none
+		sourceColumn: month_name
+		sortByColumn: 'Month Number'
+
+	column 'Month Short'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: month_short
+		sortByColumn: 'Month Number'
+
+	partition Month = entity
+		mode: directLake
+		source
+			entityName: dim_month
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'

@@ -1,0 +1,213 @@
+/// Daily trip totals. Grain: pickup date x taxi type x pickup zone x dropoff borough x payment type.
+table 'Taxi Trips'
+
+	/// Number of valid taxi trips (yellow + green) after Silver quality rules.
+	measure Trips = SUM('Taxi Trips'[Trip Count])
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Passengers carried; trips with a missing passenger count contribute 0.
+	measure Passengers = SUM('Taxi Trips'[Passenger Count])
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Trips in the same period shifted back one month, for month-over-month comparison.
+	measure 'Trips Previous Month' = CALCULATE([Trips], DATEADD('Date'[Date], -1, MONTH), REMOVEFILTERS(Month))
+		formatString: #,##0
+		displayFolder: Volume
+
+	/// Month-over-month (MoM) change in trips versus the previous month.
+	measure 'Trips MoM Change %' = DIVIDE([Trips] - [Trips Previous Month], [Trips Previous Month])
+		formatString: 0.0%
+		displayFolder: Volume
+
+	/// Total amount charged to passengers: fare, surcharges, taxes, tolls and tips. Cash tips are not recorded by TLC.
+	measure Revenue = SUM('Taxi Trips'[Total Amount])
+		formatString: $#,##0
+		displayFolder: Revenue
+
+	/// Metered time-and-distance fare only, excluding surcharges, tolls and tips.
+	measure 'Fare Revenue' = SUM('Taxi Trips'[Fare Amount])
+		formatString: $#,##0
+		displayFolder: Revenue
+
+	/// Average metered fare per trip.
+	measure 'Average Fare' = DIVIDE([Fare Revenue], [Trips])
+		formatString: $#,##0.00
+		displayFolder: Revenue
+
+	/// Average total amount charged per trip.
+	measure 'Average Revenue per Trip' = DIVIDE([Revenue], [Trips])
+		formatString: $#,##0.00
+		displayFolder: Revenue
+
+	/// Total amount charged divided by trip miles.
+	measure 'Revenue per Mile' = DIVIDE([Revenue], SUM('Taxi Trips'[Total Distance Miles]))
+		formatString: $#,##0.00
+		displayFolder: Revenue
+
+	/// Average trip distance in miles as reported by the taximeter.
+	measure 'Average Distance (miles)' = DIVIDE(SUM('Taxi Trips'[Total Distance Miles]), [Trips])
+		formatString: #,##0.00
+		displayFolder: Trip profile
+
+	/// Average minutes from pickup to dropoff.
+	measure 'Average Duration (min)' = DIVIDE(SUM('Taxi Trips'[Total Duration Min]), [Trips])
+		formatString: #,##0.0
+		displayFolder: Trip profile
+
+	/// Share of trips paid by credit card.
+	measure 'Card Payment Share' = DIVIDE(SUM('Taxi Trips'[Card Trip Count]), [Trips])
+		formatString: 0.0%
+		displayFolder: Payments
+
+	/// Tips as a percentage of fare for credit-card trips only, because TLC does not record cash tips.
+	measure 'Card Tip %' = DIVIDE(SUM('Taxi Trips'[Card Tip Amount]), SUM('Taxi Trips'[Card Fare Amount]))
+		formatString: 0.0%
+		displayFolder: Payments
+
+	/// Share of trips with a JFK/Newark rate code or a pickup or dropoff at JFK, LaGuardia or Newark.
+	measure 'Airport Trip Share' = DIVIDE(SUM('Taxi Trips'[Airport Trip Count]), [Trips])
+		formatString: 0.0%
+		displayFolder: Volume
+
+	/// Average trips per calendar day in the current selection (days without trips are ignored).
+	measure 'Average Daily Trips' = AVERAGEX(VALUES('Date'[Date]), [Trips])
+		formatString: #,##0
+		displayFolder: Seasonality
+
+	/// Share of the selection's revenue earned by this zone or borough (100% across all rows of a zone table).
+	measure 'Revenue Contribution %' = DIVIDE([Revenue], CALCULATE([Revenue], ALLSELECTED('Pickup Zone')))
+		formatString: 0.00%
+		displayFolder: Revenue
+
+	/// Green (Boro) taxi trips as a share of all taxi trips, ignoring the taxi type filter.
+	measure 'Green Trip Share' = DIVIDE(CALCULATE([Trips], 'Taxi Trips'[Taxi Type] = "green", REMOVEFILTERS('Taxi Type')), CALCULATE([Trips], REMOVEFILTERS('Taxi Trips'[Taxi Type]), REMOVEFILTERS('Taxi Type')))
+		formatString: 0.0%
+		displayFolder: Comparison
+
+	/// Trips on a US federal holiday; blank on other days, so tables show holidays only.
+	measure 'Holiday Trips' = IF(SELECTEDVALUE('Date'[Is Holiday]) = TRUE(), [Trips])
+		formatString: #,##0
+		displayFolder: Seasonality
+
+	/// The 'typical day' baseline: average trips on all 2024 non-holiday days with the same weekday as the holiday (e.g. Christmas 2024 was a Wednesday, so it is compared with the average 2024 Wednesday). Whole year, so seasonality is included.
+	measure 'Typical Same Weekday Trips' = ```
+			VAR DayNumber = SELECTEDVALUE('Date'[Day of Week Number])
+			RETURN
+			    IF(
+			        NOT ISBLANK([Holiday Trips]),
+			        CALCULATE(
+			            [Average Daily Trips],
+			            REMOVEFILTERS('Date'),
+			            REMOVEFILTERS(Month),
+			            'Date'[Day of Week Number] = DayNumber,
+			            'Date'[Is Holiday] = FALSE()
+			        )
+			    )
+			```
+		formatString: #,##0
+		displayFolder: Seasonality
+
+	/// Holiday trips compared with the typical same-weekday baseline (Typical Same Weekday Trips). -55% means 55% fewer trips than a normal day.
+	measure 'Holiday vs Typical Weekday %' = IF(NOT ISBLANK([Holiday Trips]), DIVIDE([Holiday Trips], [Typical Same Weekday Trips]) - 1)
+		formatString: +0.0%;-0.0%;0.0%
+		displayFolder: Seasonality
+
+	column 'Pickup Date'
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		summarizeBy: none
+		sourceColumn: pickup_date
+
+	column 'Pickup Location ID'
+		dataType: int64
+		isHidden
+		summarizeBy: none
+		sourceColumn: pu_location_id
+
+	/// yellow = medallion taxi (street hails anywhere); green = Boro taxi (street hails outside central Manhattan and the airports).
+	column 'Taxi Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: taxi_type
+
+	/// Borough of the dropoff zone.
+	column 'Dropoff Borough'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: do_borough
+
+	/// Payment method recorded by the meter (Credit card, Cash, No charge, Dispute, ...).
+	column 'Payment Type'
+		dataType: string
+		summarizeBy: none
+		sourceColumn: payment_type
+
+	column 'Trip Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: trip_count
+
+	column 'Passenger Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: passenger_count
+
+	column 'Total Distance Miles'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: total_distance_miles
+
+	column 'Total Duration Min'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: total_duration_min
+
+	column 'Fare Amount'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: fare_amount
+
+	column 'Total Amount'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: total_amount
+
+	column 'Card Trip Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: card_trip_count
+
+	column 'Card Fare Amount'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: card_fare_amount
+
+	column 'Card Tip Amount'
+		dataType: decimal
+		isHidden
+		summarizeBy: sum
+		sourceColumn: card_tip_amount
+
+	column 'Airport Trip Count'
+		dataType: int64
+		isHidden
+		summarizeBy: sum
+		sourceColumn: airport_trip_count
+
+	partition 'Taxi Trips' = entity
+		mode: directLake
+		source
+			entityName: fact_trips_daily_zone
+			schemaName: gold
+			expressionSource: 'DirectLake - NYC Taxi'
