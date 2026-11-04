@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+# exports produced by tools/ (PDF/zip); page images live in docs/snapshots
+*.pdf
+*.zip
+# Livy debugging session id (tools/livy.py)
+.livy_session
+# Power BI Desktop local cache/settings
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
