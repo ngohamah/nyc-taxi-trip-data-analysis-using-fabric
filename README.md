@@ -1,6 +1,7 @@
 # NYC Taxi Trips 2024: Medallion Lakehouse on Microsoft Fabric
 
 [![CI](https://github.com/ngohamah/nyc-taxi-trip-data-analysis-using-fabric/actions/workflows/ci.yml/badge.svg)](https://github.com/ngohamah/nyc-taxi-trip-data-analysis-using-fabric/actions/workflows/ci.yml)
+[![Coverage](https://raw.githubusercontent.com/ngohamah/nyc-taxi-trip-data-analysis-using-fabric/badges/coverage.svg)](https://github.com/ngohamah/nyc-taxi-trip-data-analysis-using-fabric/actions/workflows/ci.yml)
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB)
 ![Spark 3.5 · Delta 3.2](https://img.shields.io/badge/Spark%203.5-Delta%20Lake%203.2-E25A1C)
 ![Microsoft Fabric](https://img.shields.io/badge/Microsoft%20Fabric-Direct%20Lake-0F6CBD)
@@ -164,6 +165,7 @@ The Spark tests need **Java 17** (`JAVA_HOME` set, or `java` on the `PATH`), the
 
 1. **Lint:** `ruff check` (pyflakes rules: undefined names, unused imports).
 2. **Tests:** Python 3.11 with Java 17. The full suite runs with `REQUIRE_SPARK=1`, so the Spark tests can't be skipped silently, and the build fails below **95% coverage**. Test results and `coverage.xml` are uploaded as build artifacts.
+3. **Coverage badge:** on `main`, the coverage figure is rendered as the badge at the top of this README and published to the `badges` branch.
 
 Changes go through a pull request, and CI must pass before merging into `main`.
 
