@@ -118,19 +118,59 @@ pyproject.toml       pytest, coverage and ruff settings
 
 ## Running it
 
-Requirements: Python 3.11 or later, the Azure CLI and a Fabric capacity (a trial works). Install the packages with `pip install -r requirements.txt`. Run all commands from the repository root.
+Prerequisites: Python 3.11+, the Azure CLI and a Fabric capacity (a trial works). Run every command from the repository root.
 
-1. `az login --allow-no-subscriptions`
-2. Set `WORKSPACE` in `src/fabric.py` to your workspace name.
-3. `python src/fabric.py deploy` to upload the notebooks, then run them in order with `python src/fabric.py run 01_bronze_ingest` (then `02_silver_transform` and `03_gold_aggregate`). Alternatively, use `python src/pipeline.py deploy` to create a pipeline that runs all three.
-4. `python src/semantic_model.py deploy`, then `python src/semantic_model.py refresh`.
-5. `python src/report.py deploy`
-6. `python src/sql_views.py`
+```bash
+# 1. Install the Python dependencies (deployment tools + tests)
+pip install -r requirements.txt
+
+# 2. Sign in to Azure (Fabric trial tenants often have no Azure subscription, hence the flag)
+az login --allow-no-subscriptions
+
+# 3. One-time setup in the Fabric portal:
+#    - create a workspace on your Fabric capacity
+#    - create a lakehouse named nyc_taxi_lakehouse with "Lakehouse schemas" enabled
+#    - set WORKSPACE (and LAKEHOUSE, if you named it differently) at the top of src/fabric.py
+
+# 4. Upload the three notebooks to Fabric, bound to the lakehouse
+python src/fabric.py deploy
+
+# 5. Run the medallion layers in order (each command waits for the run to finish)
+python src/fabric.py run 01_bronze_ingest      # download the 24 TLC files -> bronze tables
+python src/fabric.py run 02_silver_transform   # dedupe + quality rules -> silver (rejects kept)
+python src/fabric.py run 03_gold_aggregate     # star schema + reconciliation check -> gold
+
+#    Optional: a Fabric pipeline that runs step 5 end to end, with retries
+python src/pipeline.py deploy
+
+# 6. Create the Direct Lake semantic model, then refresh it to load the Gold tables
+python src/semantic_model.py deploy
+python src/semantic_model.py refresh
+
+# 7. Publish the 5-page Power BI report on the model
+python src/report.py deploy
+
+# 8. Create the dbo.vw_* SQL views for analysts
+python src/sql_views.py
+```
 
 Useful extras:
-- `python tools/download_report.py powerbi` refreshes the PBIP report in `powerbi/` from the live report.
-- `python tools/export_page.py <page> <out.pdf>` exports one page as a PDF and PNG.
-- To snapshot the pages for one borough, run `src/report.py deploy` with `NYC_REPORT_NAME` set to a new report name and `NYC_PRESELECT_BOROUGH` set to the borough. Then run `tools/export_page.py` with the same `NYC_REPORT_NAME`, and delete the copy afterwards.
+
+```bash
+# Re-download the live report into powerbi/ (PBIP for Power BI Desktop)
+python tools/download_report.py powerbi
+
+# Export one report page as PDF + PNG
+python tools/export_page.py overview overview.pdf
+
+# Snapshot the pages for one borough, using a temporary copy of the report (delete the copy afterwards)
+NYC_REPORT_NAME="NYC Taxi - Manhattan" NYC_PRESELECT_BOROUGH=Manhattan python src/report.py deploy
+NYC_REPORT_NAME="NYC Taxi - Manhattan" python tools/export_page.py overview docs/snapshots/01_overview_manhattan.pdf
+
+# Re-collect the README numbers from the live lakehouse, then redraw the diagrams
+python tools/project_stats.py
+python tools/make_diagrams.py
+```
 
 ## Tests and CI
 
@@ -165,7 +205,7 @@ The Spark tests need **Java 17** (`JAVA_HOME` set, or `java` on the `PATH`), the
 
 1. **Lint:** `ruff check` (pyflakes rules: undefined names, unused imports).
 2. **Tests:** Python 3.11 with Java 17. The full suite runs with `REQUIRE_SPARK=1`, so the Spark tests can't be skipped silently, and the build fails below **95% coverage**. Test results and `coverage.xml` are uploaded as build artifacts.
-3. **Coverage badge:** on `main`, the coverage figure is rendered as the badge at the top of this README and published to the `badges` branch.
+3. **Coverage badge:** on `main`, the coverage figure is rendered as the badge at the top of this README. The image is stored on the `badges` branch, because GitHub has no built-in coverage badge and keeping it there avoids bot commits on `main`.
 
 Changes go through a pull request, and CI must pass before merging into `main`.
 
