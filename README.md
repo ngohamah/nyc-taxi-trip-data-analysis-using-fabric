@@ -127,6 +127,18 @@ pip install -r requirements.txt
 # 2. Sign in to Azure (Fabric trial tenants often have no Azure subscription, hence the flag)
 az login --allow-no-subscriptions
 
+#    If that fails with "az: command not found" / "'az' is not recognized", install the Azure CLI,
+#    open a NEW terminal so it is on your PATH, check it with `az --version`, then repeat the login:
+#      Windows:         winget install --exact --id Microsoft.AzureCLI
+#      macOS:           brew install azure-cli
+#      Ubuntu/Debian:   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+#      Other options:   https://learn.microsoft.com/cli/azure/install-azure-cli
+#
+#    If az is installed but the sign-in itself fails:
+#      no browser opens (SSH, remote desktop)  ->  az login --use-device-code --allow-no-subscriptions
+#      wrong organisation / several accounts   ->  az login --tenant <your-domain-or-tenant-id> --allow-no-subscriptions
+#      check who you are signed in as          ->  az account show
+
 # 3. One-time setup in the Fabric portal:
 #    - create a workspace on your Fabric capacity
 #    - create a lakehouse named nyc_taxi_lakehouse with "Lakehouse schemas" enabled
