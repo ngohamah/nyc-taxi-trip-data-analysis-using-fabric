@@ -1,0 +1,78 @@
+{
+  "source_files": {
+    "parquet_files": 24,
+    "parquet_bytes": 708921745,
+    "all_files": 25
+  },
+  "delta_storage_by_schema": {
+    "bronze": {
+      "files": 319,
+      "bytes": 880422309
+    },
+    "gold": {
+      "files": 146,
+      "bytes": 88151574
+    },
+    "silver": {
+      "files": 229,
+      "bytes": 2156855477
+    }
+  },
+  "row_counts": {
+    "bronze.green_trips_raw": 660218,
+    "bronze.ingestion_log": 24,
+    "bronze.taxi_zones_raw": 265,
+    "bronze.yellow_trips_raw": 41169720,
+    "gold.dim_borough": 7,
+    "gold.dim_date": 366,
+    "gold.dim_month": 12,
+    "gold.dim_taxi_type": 2,
+    "gold.dim_zone": 265,
+    "gold.dq_layer_counts": 24,
+    "gold.dq_rejections": 108,
+    "gold.fact_trips_daily_zone": 764873,
+    "gold.hourly_demand": 21487,
+    "gold.monthly_kpis": 24,
+    "silver.taxi_trips": 41077632,
+    "silver.taxi_trips_rejected": 752299,
+    "silver.taxi_zones": 265
+  },
+  "ingestion_log": [
+    {
+      "taxi_type": "yellow",
+      "files": 12,
+      "rows": 41169720
+    },
+    {
+      "taxi_type": "green",
+      "files": 12,
+      "rows": 660218
+    }
+  ],
+  "rejections_by_rule": {
+    "negative_amount": 735944,
+    "non_positive_duration": 14170,
+    "invalid_distance": 1371,
+    "pickup_outside_file_month": 584,
+    "duration_over_24h": 230
+  },
+  "layers": {
+    "bronze_rows": 41829938,
+    "silver_rows": 41077632,
+    "rejected_rows": 752299,
+    "duplicate_rows": 7
+  },
+  "gold_trip_total": 41077632,
+  "revenue_total": 1177999703.03,
+  "sql_views": 6,
+  "semantic_model": {
+    "tables": 9,
+    "relationships": 11,
+    "measures": 32
+  },
+  "report": {
+    "pages": 5,
+    "tooltip_pages": 1,
+    "visuals": 95
+  }
+}
