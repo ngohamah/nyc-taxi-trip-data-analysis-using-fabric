@@ -6,27 +6,22 @@ Everything is deployed from code. The scripts in this repository create the note
 
 ## Architecture
 
-```
-NYC TLC parquet files (2024, yellow + green)
-        │
-        ▼
- bronze  raw trips + ingestion metadata (source file, batch id, load time)   notebooks/01_bronze_ingest.py
-        │   dedupe, range and logic checks, rejected rows logged by rule
-        ▼
- silver  validated, conformed trips                                          notebooks/02_silver_transform.py
-        │   daily/zone, hourly, monthly aggregates; data-quality tables; slicer dimensions
-        ▼
- gold    report-ready tables                                                 notebooks/03_gold_aggregate.py
-        │
-        ├──► Direct Lake semantic model "NYC Taxi"                           src/semantic_model.py
-        │        └──► Power BI report "NYC Taxi Overview" (5 pages)          src/report.py
-        └──► dbo.vw_* SQL views on the SQL analytics endpoint                src/sql_views.py
-```
+![Medallion architecture: NYC TLC files flow through Bronze, Silver and Gold in one Fabric lakehouse, then to a Direct Lake semantic model, the Power BI report and SQL views](docs/architecture.png)
 
-- **One schema-enabled lakehouse** (`nyc_taxi_lakehouse`) with `bronze`, `silver` and `gold` schemas, plus analyst views in `dbo`.
-- **Data quality:** 41.83M Bronze rows produce 41.08M Silver rows (98.2% kept). Each rejected row is logged with the rule it failed. Gold totals are reconciled against Silver, and the Gold notebook fails the run if they don't match.
-- **Gold tables** are written with V-Order and optimize-write, then ZORDERed for Direct Lake reads.
-- **Shared slicers:** Month, Borough and Taxi Type tables filter every fact table, so the multi-select slicers stay in sync on every page.
+- **One schema-enabled lakehouse** (`nyc_taxi_lakehouse`) holds the `bronze`, `silver` and `gold` schemas, plus the analyst views in `dbo`.
+- **Each layer is a notebook** in [`notebooks/`](notebooks), deployed and run through the Fabric REST API by [`src/fabric.py`](src/fabric.py) or the pipeline in [`src/pipeline.py`](src/pipeline.py).
+- **Nothing is lost between layers:** Bronze row counts, Silver valid rows and rejected rows (with their reasons) are kept in `gold.dq_layer_counts` and `gold.dq_rejections`, and the Data Quality report page shows them.
+
+## Semantic model
+
+![Semantic model relationship diagram: Taxi Trips, Hourly Demand and Pipeline Layers fact tables joined to Month, Borough, Taxi Type, Date and Pickup Zone dimensions](docs/model_relationships.png)
+
+The Direct Lake model `NYC Taxi` reads the Gold tables straight from OneLake. Defined in [`src/semantic_model.py`](src/semantic_model.py); the TMDL is in [`powerbi/NYC Taxi.SemanticModel`](powerbi/NYC%20Taxi.SemanticModel).
+
+- **Fact tables** (charcoal) hold the measures. *Taxi Trips* has trips, revenue, fares, tips and the holiday comparison; *Hourly Demand* feeds the weekday × hour heatmap; *Pipeline Layers* and *Rejections* feed the Data Quality page.
+- **Dimension tables** (yellow) are the filters. *Month*, *Borough* and *Taxi Type* are shared by several fact tables, so one slicer filters every visual on every page. *Date* and *Pickup Zone* roll up to *Month* and *Borough*.
+- **All relationships are one-to-many with single-direction filtering** (from the 1 side to the * side), which keeps totals predictable.
+- The diagram is generated from the model definition by [`tools/make_diagrams.py`](tools/make_diagrams.py), so it can be redrawn whenever the model changes.
 
 ## Report snapshots (pickup borough = Manhattan)
 
@@ -60,10 +55,10 @@ src/                 deployment code
   report.py          PBIR generator for the report (pages, visuals, theme, insight cards)
   insights.json      text of the Key Insights cards
   sql_views.py       dbo.vw_* views on the SQL analytics endpoint
-tools/               export pages to PDF/PNG, pull the report back to PBIP, job history, Livy debugging
+tools/               export pages to PDF/PNG, pull the report back to PBIP, draw the README diagrams, job history, Livy debugging
 checks/              DAX and SQL verification scripts
 powerbi/             Power BI project: open "NYC Taxi Overview.pbip" in Power BI Desktop
-docs/snapshots/      page images shown above
+docs/                architecture and model diagrams; snapshots/ holds the page images
 ```
 
 ## Running it
