@@ -16,10 +16,20 @@ MUTED, BRONZE, SILVER, GOLD, BLUE = "#5F6B73", "#B87333", "#8E9AA3", "#D4A017", 
 FONTS = r"C:\Windows\Fonts"
 
 
+FALLBACK = {"regular": "DejaVuSans.ttf", "bold": "DejaVuSans-Bold.ttf", "semi": "DejaVuSans-Bold.ttf",
+            "italic": "DejaVuSans-Oblique.ttf", "mono": "DejaVuSansMono.ttf"}
+
+
 def font(size, weight="regular"):
+    """Segoe UI on Windows (what the committed PNGs use); DejaVu or Pillow's built-in font elsewhere, e.g. in CI."""
     name = {"regular": "segoeui.ttf", "bold": "segoeuib.ttf", "semi": "seguisb.ttf",
             "italic": "segoeuii.ttf", "mono": "consola.ttf"}[weight]
-    return ImageFont.truetype(os.path.join(FONTS, name), size * S)
+    for candidate in (os.path.join(FONTS, name), FALLBACK[weight]):
+        try:
+            return ImageFont.truetype(candidate, size * S)
+        except OSError:
+            continue
+    return ImageFont.load_default(size * S)
 
 
 def wrap(text, f, width):

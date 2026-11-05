@@ -6,7 +6,7 @@ Usage:
   python tools/livy.py stop                             # delete the session
 """
 import os, sys; sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src"))  # shared helpers live in src/
-import json, os, re, sys, time
+import re, time
 import fabric
 
 SESSION_FILE = os.path.join(fabric.HERE, ".livy_session")

@@ -1,0 +1,37 @@
+[project]
+name = "nyc-taxi-fabric-medallion"
+version = "1.0.0"
+description = "NYC taxi 2024 medallion lakehouse on Microsoft Fabric: notebooks, Direct Lake model, Power BI report, SQL views"
+requires-python = ">=3.11"
+license = "MIT"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = ["ignore::DeprecationWarning:pyspark.*"]
+
+[tool.coverage.run]
+source = ["src", "tools", "checks"]
+# Thin CLI scripts with no functions (they only call the service at import time) are covered by the compile test.
+omit = ["tools/download_report.py", "tools/export_*.py", "tools/render_pdf.py", "tools/get_visual.py",
+        "tools/jobs.py", "tools/insights.py", "checks/check_*.py", "checks/sql_list.py", "checks/validate_model.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_also = ["if __name__ == .__main__.:"]
+
+[tool.ruff]
+line-length = 160
+target-version = "py311"
+# Fabric notebooks get these names from the runtime.
+builtins = ["spark", "notebookutils", "display"]
+
+[tool.ruff.lint]
+# Pyflakes (undefined names, unused imports/variables) + syntax errors. Style is left to the authors.
+select = ["F", "E9"]
+
+[tool.ruff.lint.per-file-ignores]
+# scripts put src/ on sys.path on their first line, then import sibling modules
+"tools/*" = ["E402"]
+"checks/*" = ["E402"]
