@@ -8,3 +8,13 @@ __pycache__/
 # Power BI Desktop local cache/settings
 **/.pbi/localSettings.json
 **/.pbi/cache.abf
+
+# test and coverage outputs
+.coverage
+coverage.xml
+test-results.xml
+.pytest_cache/
+.ruff_cache/
+spark-warehouse/
+metastore_db/
+derby.log
